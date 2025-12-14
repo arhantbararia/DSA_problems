@@ -1,4 +1,6 @@
-package main
+package tree-and-recursion
+
+import "fmt"
 
 type node struct {
 	candy int
@@ -21,6 +23,8 @@ func new_non_house(left, right *node) *node {
 	new_node.left = left
 	new_node.right = right
 	new_node.candy = -1
+
+	return new_node
 }
 
 func tree_candy(tree *node) int {
@@ -92,7 +96,7 @@ func readTreeHelper(input string, pos *int) *node {
 		//skip '('
 		tree.left = readTreeHelper(input, pos)
 
-		*pos++ //skip seperator ' '
+		*pos++ //skip seperator ','
 		tree.right = readTreeHelper(input, pos)
 
 		*pos++ //after ')'
@@ -104,10 +108,10 @@ func readTreeHelper(input string, pos *int) *node {
 	tree.right = nil
 
 	//First Digit
-	tree.candy = int(input[*pos] - '0')
+	tree.candy = int(input[*pos] - '0') // This line will panic if input[*pos] is not a digit
 	*pos++
 
-	for *pos < len(input) && input[*pos] != ')' && input[*pos] != ' ' && input[*pos] != '\x00' {
+	for *pos < len(input) && input[*pos] != ')' && input[*pos] != ',' && input[*pos] != '\x00' {
 		tree.candy = tree.candy*10 + int(input[*pos]-'0')
 		*pos++
 	}
@@ -116,18 +120,31 @@ func readTreeHelper(input string, pos *int) *node {
 
 }
 
+func readTree(input string) *node {
+	pos := 0
+	return readTreeHelper(input, &pos)
+
+}
+
 func main() {
-
-	//binary tree given like ((4,9) , 15)
-
-	inputs = []string{
-		""
+	testCases := []string{
+		"((1,2),3)",
+		"((4,9),15)",
+		"(((1,1),1),1)",
+		"((10,20),(30,40))",
+		"((1,(2,3)),4)",
+		"((1,2),(3,(4,5)))",
+		"(6)", // A single house
+		"((1,1),100)",
+		"((100,1),1)",
+		"((1,100),1)",
 	}
 
-
-	for _ , inp := inputs {
-		
+	for i, tc := range testCases {
+		fmt.Printf("Test Case %d: Input: %s\n", i+1, tc)
+		tree := readTree(tc)
+		streets, candy := tree_solve(tree)
+		fmt.Printf("  Streets: %d, Candy: %d\n\n", streets, candy)
 	}
-
 
 }

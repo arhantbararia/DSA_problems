@@ -1,4 +1,4 @@
-package main
+package tree-and-recursion
 
 type node struct {
 	candy int
